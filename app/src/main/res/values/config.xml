@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Music column; every other TV app goes in Video unless listed under Apps or hidden. -->
+    <string-array name="music_packages">
+        <item>com.spotify.tv.android</item>
+        <item>com.google.android.youtube.tvmusic</item>
+    </string-array>
+    <string-array name="apps_packages">
+        <item>com.android.vending</item>
+    </string-array>
+    <!-- Video column: these first, in this order, then the rest alphabetically. -->
+    <string-array name="video_first">
+        <item>com.google.android.youtube.tv</item>
+        <item>com.disney.disneyplus</item>
+        <item>com.amazon.amazonvideo.livingroom</item>
+    </string-array>
+    <string-array name="hidden_packages">
+        <item>com.android.tv.settings</item>
+        <item>com.mediatek.wwtv.tvcenter</item>
+        <!-- the author's other launcher -->
+        <item>com.oso.atvhome</item>
+    </string-array>
+    <!-- Startup sequence: shown when the TV turns on. Leave the text empty to skip it. -->
+    <string name="boot_text" translatable="false">Modded by msrakhra</string>
+    <!-- false = only on a cold start (after a full reboot), not every time the screen comes on -->
+    <bool name="boot_on_screen_on">true</bool>
+    <!-- Boot text timing, in ms from when boot_sound.mp3 starts: when it begins fading in, and how
+         long each fade takes. It always finishes fading out as the sound ends. -->
+    <integer name="boot_text_in_ms">600</integer>
+    <integer name="boot_text_fade_ms">1000</integer>
+    <!-- Menu click volume, 0-100 (0 turns the click off). The sound is res/raw/nav_click.mp3. -->
+    <integer name="nav_click_volume">80</integer>
+</resources>
