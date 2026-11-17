@@ -1,0 +1,11 @@
+# Build output and local machine settings
+build/
+.gradle/
+local.properties
+.idea/
+*.iml
+.DS_Store
+
+# Safety net: the Rodin font is a commercial font and must never be published.
+# Keep it only in the personal edition (..\xmb-home-personal).
+app/src/main/assets/fonts/Rodin-*

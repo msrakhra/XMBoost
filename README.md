@@ -1,12 +1,16 @@
-# XMB Home (msrakhra mod)
+# XMBoost
 
-A PS3-style XMB home screen for Android TV, with a boot sequence, flowing ribbon waves and
-sparkles, menu sounds and theme colours. It replaces the stock launcher and runs much lighter
-than it.
+**A faster, ad-free home screen for Android TV, styled after the PS3's XMB.**
 
-![XMB Home running on a TV](docs/screenshot.png)
+Stock Android TV launchers load rows of recommendations, ads and promoted content in the
+background, which makes cheap TVs sluggish. XMBoost replaces that with a single lightweight
+app. It has no ads, no recommendation rows, needs no internet access, and requests no
+permissions. It just shows your apps and inputs in the cross-bar menu the PS3 made famous.
 
-Based on [amachador/xmb-home](https://github.com/amachador/xmb-home) (MIT). This fork adds:
+![XMBoost running on a TV](docs/screenshot.png)
+
+XMBoost is a fork of [XMB Home](https://github.com/amachador/xmb-home) by amachador (MIT). On top
+of the original, it adds:
 
 - **Android 11 support:** `minSdk` lowered from 34 to 30. Nothing in the code needs newer Android.
 - **Boot sequence:** fades up from black, the ribbons sweep in from left to right, and a short
@@ -77,8 +81,8 @@ Clone into your user folder. Windows won't let you write inside `C:\Windows`.
 
 ```powershell
 cd $HOME
-git clone https://github.com/<your-username>/xmb-home
-cd xmb-home
+git clone https://github.com/<your-username>/XMBoost
+cd XMBoost
 ```
 
 ### 5. Add your own sounds and fonts (optional)
@@ -99,7 +103,7 @@ you have the rights to use.
 
 ### 6. Build the APK
 
-**With Android Studio:** open the `xmb-home` folder, let Gradle sync finish (install anything it
+**With Android Studio:** open the `XMBoost` folder, let Gradle sync finish (install anything it
 asks for, but decline any Android Gradle Plugin upgrade), then choose **Build → Build APK(s)**.
 
 **From the command line:**
@@ -156,13 +160,13 @@ adb shell pm disable-user --user 0 com.google.android.tvlauncher
 adb shell input keyevent KEYCODE_HOME
 ```
 
-> **Only do this once XMB Home is installed and has opened successfully.** If you disable the
+> **Only do this once XMBoost is installed and has opened successfully.** If you disable the
 > stock launcher with nothing to replace it, Home leads to a blank screen until you re-enable it.
 > Keep the undo command from [Going back](#going-back) somewhere safe.
 
 ### 9. Fix the remote's Settings button (optional)
 
-With the stock launcher disabled, the remote's Settings button may stop working. XMB Home
+With the stock launcher disabled, the remote's Settings button may stop working. XMBoost
 includes a small accessibility service that only listens for that key:
 
 ```powershell
@@ -228,7 +232,7 @@ TV packages with `adb shell pm list packages | findstr -i tv`, then change the p
 
 ## Going back
 
-Re-enable the stock launcher **first**, then remove XMB Home:
+Re-enable the stock launcher **first**, then remove XMBoost:
 
 ```powershell
 adb shell pm enable com.google.android.tvlauncher
@@ -247,7 +251,7 @@ A TV software update can sometimes re-enable the stock launcher. If that happens
 | `adb` isn't recognised | Close and reopen PowerShell after installing it |
 | `adb devices` shows `unauthorized` | Accept the prompt on the TV, then run `adb connect` again |
 | `INSTALL_FAILED_OLDER_SDK` | Your TV runs Android 10 or older, which this fork doesn't support |
-| `failed to stat ... No such file` | You're in the wrong folder. `cd` into `xmb-home` first, or use the full path to the APK. |
+| `failed to stat ... No such file` | You're in the wrong folder. `cd` into `XMBoost` first, or use the full path to the APK. |
 | `Failed to set default home` | Make sure the install finished first, then use the `pm disable-user` route in step 8 |
 | Home shows a blank screen | Run `adb shell pm enable com.google.android.tvlauncher` |
 | Crashes on open | Run `adb logcat -d -s AndroidRuntime` and check the error |
@@ -259,7 +263,7 @@ A TV software update can sometimes re-enable the stock launcher. If that happens
 
 - **Original project:** [XMB Home](https://github.com/amachador/xmb-home) by amachador, MIT.
   The original copyright notice is kept in [`LICENSE`](LICENSE).
-- **Fork changes:** msrakhra.
+- **XMBoost:** msrakhra.
 - **Icons:** redraws of the XMB icons by sah4pok,
   [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). See [`CREDITS.md`](CREDITS.md).
 - **Fonts:** [Zen Kaku Gothic New](https://fonts.google.com/specimen/Zen+Kaku+Gothic+New) for the menu,

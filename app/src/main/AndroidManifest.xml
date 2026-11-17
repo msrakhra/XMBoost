@@ -16,7 +16,7 @@
     </queries>
 
     <application
-        android:label="XMB Home"
+        android:label="XMBoost"
         android:banner="@drawable/app_banner"
         android:icon="@drawable/app_banner"
         android:theme="@style/HomeTheme"
