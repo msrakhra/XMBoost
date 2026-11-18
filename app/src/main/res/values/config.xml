@@ -30,4 +30,7 @@
     <integer name="boot_text_fade_ms">1000</integer>
     <!-- Menu click volume, 0-100 (0 turns the click off). The sound is res/raw/nav_click.mp3. -->
     <integer name="nav_click_volume">80</integer>
+    <!-- Ribbon style: true = liquid, shaded 3D-looking ribbons; false = the original flat ribbons.
+         Change it and rebuild to switch back at any time. -->
+    <bool name="liquid_ribbons">true</bool>
 </resources>

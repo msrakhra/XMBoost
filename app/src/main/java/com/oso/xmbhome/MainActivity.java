@@ -42,14 +42,20 @@ public class MainActivity extends Activity implements NowPlaying.Listener {
     private static final float ZOOM = 1.06f;               // faint zoom for wake, open and return
     private static final long WAKE_ITEM_DELAY = 400;       // item column after the categories, wake only
     private static final long WAKE_WINDOW_MS = 8000;       // a start this soon after screen-on is a wake
-    // Boot sequence: waves rise from black, the boot text fades in, holds, fades out, then the menu.
-    private static final long BOOT_BG_MS = 1400, BOOT_TEXT_DELAY = 600, BOOT_TEXT_FADE = 1000,
-            BOOT_TEXT_HOLD = 2200, BOOT_GAP = 300;
+    // Boot sequence, all in ms:
+    //  1. the boot text fades in on a black screen and stays alone for a random BOOT_BLACK_MIN-MAX;
+    //  2. the ribbons and sparkles fade in, the background still black;
+    //  3. halfway through the boot sound (at least BOOT_COLOUR_AFTER after the ribbons start), the
+    //     colour fades in; then the text fades out and the menu comes in as usual.
+    private static final long BOOT_BLACK_MIN = 1000, BOOT_BLACK_MAX = 1500;
+    private static final long BOOT_RIBBONS_FADE = 1800;
+    private static final long BOOT_RIBBONS_EARLY = 1600;   // ribbons start this much before the black hold ends
+    private static final long BOOT_COLOUR_AFTER = 1500, BOOT_COLOUR_FADE = 1600;
+    private static final long BOOT_TEXT_OUT = 800;   // text fade-out, once the colour is in
+    private static final long BOOT_TEXT_OUT_EARLY = 700;   // text starts fading this much before the colour is fully in
+    private static final long BOOT_MENU_DELAY = 800;  // gap between the text going and the menu
+    private static final long BOOT_COLOUR_EARLY = 1000;   // colour fades in this much sooner (text and menu timing unchanged)
     private static final float BOOT_TEXT_ALPHA = .75f;   // understated, like a signature
-    private static final long BOOT_REVEAL_DELAY = 300, BOOT_REVEAL_MS = 2400;   // ribbons sweep in from the left
-    // How much earlier the menu comes in than the end of the boot text (ms): it rises while the text
-    // is still fading out. 0 = wait for the text to finish.
-    private static final long BOOT_MENU_EARLY = 1300;
     // Screensaver: after two minutes without a key, the menu dims and drifts back a little.
     private static final long IDLE_AFTER_MS = 120_000, IDLE_ANIM_MS = 1000, IDLE_WAKE_MS = 350, PANEL_DIM_MS = 500;
     private static final float IDLE_ALPHA = .3f, IDLE_SCALE = .95f, CLOCK_ALPHA = .9f;
@@ -545,26 +551,29 @@ public class MainActivity extends Activity implements NowPlaying.Listener {
         fg.setScaleY(ZOOM);
         itemLayer.setAlpha(0f);
         long menuAt = 700;
-        // Fade up from black; on boot the ribbons then sweep in from the left over the colour.
-        wave.animate().alpha(1f).setDuration(showText ? BOOT_BG_MS : 900).setStartDelay(0).setInterpolator(FADE).start();
         if (showText) {
-            wave.reveal(BOOT_REVEAL_DELAY, BOOT_REVEAL_MS);
-            // Timed to the sound: the text fades in boot_text_in_ms after the sound starts and has
-            // faded out exactly as it ends. A short or missing sound uses the default timings.
+            // The wave view itself draws the black screen and fades the ribbons and colour in.
+            wave.setAlpha(1f);
             long soundMs = playBootSound();
             long textIn = getResources().getInteger(R.integer.boot_text_in_ms);
             long fade = getResources().getInteger(R.integer.boot_text_fade_ms);
-            long hold = BOOT_TEXT_HOLD;
-            if (soundMs > textIn + 2 * fade + 400) hold = soundMs - textIn - 2 * fade;
-            menuAt = Math.max(textIn + fade + hold + fade + BOOT_GAP - BOOT_MENU_EARLY, BOOT_REVEAL_DELAY + BOOT_REVEAL_MS);
-            final long holdMs = hold;
+            long black = BOOT_BLACK_MIN + (long) (Math.random() * (BOOT_BLACK_MAX - BOOT_BLACK_MIN));
+            long ribbonsAt = Math.max(0, textIn + fade + black - BOOT_RIBBONS_EARLY);   // text on black first
+            long colourAt = Math.max(soundMs / 2, ribbonsAt + BOOT_COLOUR_AFTER);
+            long textOutAt = colourAt + BOOT_COLOUR_FADE - BOOT_TEXT_OUT_EARLY;   // as the colour finishes
+            menuAt = textOutAt + BOOT_TEXT_OUT + BOOT_MENU_DELAY;
+            // Particles fly in once the text has fully faded out.
+            wave.boot(ribbonsAt, BOOT_RIBBONS_FADE, Math.max(ribbonsAt, colourAt - BOOT_COLOUR_EARLY), BOOT_COLOUR_FADE,
+                    textOutAt + BOOT_TEXT_OUT);
+            final long holdMs = textOutAt - textIn - fade;
             // Cancelling (a key press skips) also drops the end action, so the fade-out never starts.
             bootText.animate().alpha(BOOT_TEXT_ALPHA).setDuration(fade).setStartDelay(textIn).setInterpolator(FADE)
-                    .withEndAction(() -> bootText.animate().alpha(0f).setDuration(fade)
+                    .withEndAction(() -> bootText.animate().alpha(0f).setDuration(BOOT_TEXT_OUT)
                             .setStartDelay(holdMs).setInterpolator(FADE).start())
                     .start();
         } else {
             wave.resetEffects();
+            wave.animate().alpha(1f).setDuration(900).setStartDelay(0).setInterpolator(FADE).start();
         }
         fg.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(700).setStartDelay(menuAt).setInterpolator(FADE).start();
         itemLayer.animate().alpha(1f).setDuration(300).setStartDelay(menuAt + WAKE_ITEM_DELAY).setInterpolator(FADE)
